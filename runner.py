@@ -187,7 +187,9 @@ def print_output(
 
 def main():
     print("# Benchmark results")
-    print("")
+    print()
+    print(f"Running {NUM_TESTS} tests, each with {NUM_REQUESTS} requests.")
+    print()
     print(
         f"| {'Server'.ljust(25)} "
         f"| {'Tester'.ljust(25)} "
