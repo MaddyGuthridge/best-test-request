@@ -1,8 +1,12 @@
 import request from 'sync-request';
 import inject from 'light-my-request';
 import server from '../express_app/server';
+import { createWorker } from 'await-sync';
+
+const awaitSync = createWorker();
 
 const SYNC_REQUEST = process.env.SYNC_REQUEST;
+const AWAIT_SYNC = process.env.AWAIT_SYNC;
 const LIGHT_MY_REQUEST = process.env.LIGHT_MY_REQUEST;
 const GET_REQUEST = process.env.GET_REQUEST;
 
@@ -75,6 +79,38 @@ if (SYNC_REQUEST) {
           const json = JSON.parse(response.payload);
           expect(json.output).toStrictEqual(i * 2);
         }
+      });
+    }
+  }
+} else if (AWAIT_SYNC) {
+  if (GET_REQUEST) {
+    for (let i = 0; i < NUM_TESTS; i++) {
+      test(`await-sync GET ${i}`, () => {
+        for (let j = 0; j < NUM_REQUESTS; j++) {
+          const get = awaitSync(async (input) => {
+            const res = await fetch(`http://127.0.0.1:5001?input=${input}`);
+            const ab = await res.arrayBuffer();
+            return new Uint8Array(ab);
+          });
+          const text = new TextDecoder().decode(get(i));
+          const json = JSON.parse(text);
+          expect(json.output).toStrictEqual(i * 2);
+        }
+      });
+    }
+  } else {
+    for (let i = 0; i < NUM_TESTS; i++) {
+      test(`await-sync POST ${i}`, async () => {
+        // for (let j = 0; j < NUM_REQUESTS; j++) {
+        //   const response = await inject(server, {
+        //     method: 'POST',
+        //     url: 'http://127.0.0.1:5001',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     payload: JSON.stringify({ input: i }),
+        //   });
+        //   const json = JSON.parse(response.payload);
+        //   expect(json.output).toStrictEqual(i * 2);
+        // }
       });
     }
   }
