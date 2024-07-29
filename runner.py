@@ -2,6 +2,7 @@
 Script to test various combinations of things
 """
 import sys
+from datetime import datetime
 from subtask import Subtask
 import requests
 from requests.exceptions import ConnectionError
@@ -116,7 +117,7 @@ def jest_sync_request_post():
 
 
 def jest_sync_request_curl_post():
-    return jest_tester({ "SYNC_REQUEST_CURL": "TRUE" })
+    return jest_tester({"SYNC_REQUEST_CURL": "TRUE"})
 
 
 def jest_light_my_request():
@@ -192,7 +193,7 @@ def print_output(
     output=sys.stdout,
     color="",
 ) -> None:
-    if isinstance(duration, float):
+    if isinstance(duration, (float, int)):
         duration = f"{duration:9.3f}"
     print(
         f"{color}"
@@ -207,9 +208,18 @@ def print_output(
 
 
 def main():
-    print("# Benchmark results")
+    print("# Best Test Request")
     print()
-    print(f"Running {NUM_TESTS} tests, each with {NUM_REQUESTS} requests.")
+    print("A simple benchmark to determine the best request function when ")
+    print("testing (or at least the fastest one).")
+    print()
+    print(
+        f"This page was last updated at "
+        f"{datetime.now().isoformat(timespec='minutes')}"
+    )
+    print()
+    print(f"Each variant was benchmarked using a suite of {NUM_TESTS} tests,")
+    print(f"with each test sending {NUM_REQUESTS} requests.")
     print()
     print(
         f"| {'Server'.ljust(25)} "
