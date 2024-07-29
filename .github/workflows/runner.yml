@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:  
+  workflow_dispatch:
   schedule:
     - cron: '0 0 1 * *'
 
@@ -47,16 +47,20 @@ jobs:
         cache: 'npm'
     - name: Install JS dependencies
       run: npm ci
-    - run: mkdir -p results
+    - run: mkdir -p results site
     - name: Run benchmark
       run: |
         timeout --signal=SIGINT 20m poetry run python runner.py > results/index.md
+    - name: Write to job
+      run: cat results/index.md | tee -a $GITHUB_STEP_SUMMARY
+    - name: Convert output to HTML
+      run: poetry run python -m markdown2 results/index.md > site/index.html
     # Upload artifact from the ./build/ directory using the expected format for GitHub Pages
     - name: Upload Artifact
       id: upload
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ./results/
+        path: ./site/
     # Use previously uploaded artifact to deploy to GitHub Pages
     - name: Deploy
       id: deploy

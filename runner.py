@@ -213,6 +213,8 @@ def main():
     print("A simple benchmark to determine the best request function when ")
     print("testing (or at least the fastest one).")
     print()
+    print("[View the source code](https://github.com/MaddyGuthridge/best-test-request)")
+    print()
     print(
         f"This page was last updated at "
         f"{datetime.now().isoformat(timespec='minutes')}"
