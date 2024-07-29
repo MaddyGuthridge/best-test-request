@@ -2,13 +2,28 @@ name: Run benchmark
 
 on:
   push:
+    branches:
+      - main
   workflow_dispatch:  
   schedule:
     - cron: '0 0 1 * *'
 
+# Make sure deploy-pages has necessary permissions to deploy to GitHub Pages
+permissions:
+  pages: write
+  id-token: write
+
+# Cancel older deploy workflow when more than one is running
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   Benchmark:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }} # Output URL after the workflow has finished
     steps:
     - uses: actions/checkout@v3
       with:
@@ -32,6 +47,17 @@ jobs:
         cache: 'npm'
     - name: Install JS dependencies
       run: npm ci
+    - run: mkdir -p results
     - name: Run benchmark
       run: |
-        timeout --signal=SIGINT 20m poetry run python runner.py | tee -a $GITHUB_STEP_SUMMARY
+        timeout --signal=SIGINT 20m poetry run python runner.py > results/index.md
+    # Upload artifact from the ./build/ directory using the expected format for GitHub Pages
+    - name: Upload Artifact
+      id: upload
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./results/
+    # Use previously uploaded artifact to deploy to GitHub Pages
+    - name: Deploy
+      id: deploy
+      uses: actions/deploy-pages@v4
