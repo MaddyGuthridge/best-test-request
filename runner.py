@@ -229,7 +229,8 @@ def main():
         f"| {'Duration'.ljust(9)} "
         f"|"
     )
-    print(f"| {'-' * 25} | {'-' * 30} | {'-' * 8}: |")
+    # Awful hard-coded table
+    print(f"| {'=' * 25} | {'=' * 30} | {'=' * 8}: |")
 
     for variant in variants:
         server = variant["server"]
