@@ -230,7 +230,7 @@ def main():
         f"|"
     )
     # Awful hard-coded table
-    print(f"| {'=' * 25} | {'=' * 30} | {'=' * 8}: |")
+    print(f"| {'-' * 25} | {'-' * 30} | {'-' * 8}: |")
 
     for variant in variants:
         server = variant["server"]
