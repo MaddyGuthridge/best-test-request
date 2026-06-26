@@ -5,8 +5,8 @@ on:
     branches:
       - main
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 1 * *'
+  # schedule:
+  #   - cron: '0 0 1 * *'
 
 # Make sure deploy-pages has necessary permissions to deploy to GitHub Pages
 permissions:
